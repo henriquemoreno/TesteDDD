@@ -19,9 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5.1 - Data", "5.1 - Data", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teste.DDD.Infra.Data", "src\Teste.DDD.Infra.Data\Teste.DDD.Infra.Data.csproj", "{EB51FA84-45CD-4D2B-BFA1-EFC820C69526}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TesteDDD.Application", "src\TesteDDD.Application\TesteDDD.Application.csproj", "{014AB89E-7B84-4BAE-886D-0F6A97049AF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TesteDDD.Application", "src\TesteDDD.Application\TesteDDD.Application.csproj", "{014AB89E-7B84-4BAE-886D-0F6A97049AF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TesteDDD.UI.Site", "src\TesteDDD.UI.Site\TesteDDD.UI.Site.csproj", "{EF8F02C0-2BE3-4456-9DE0-C34FA907B004}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TesteDDD.UI.Site", "src\TesteDDD.UI.Site\TesteDDD.UI.Site.csproj", "{EF8F02C0-2BE3-4456-9DE0-C34FA907B004}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

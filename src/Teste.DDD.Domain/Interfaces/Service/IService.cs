@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Teste.DDD.Domain.Interfaces.Repository
+namespace Teste.DDD.Domain.Interfaces.Service
 {
-    public interface IRepository<TEntity> : IDisposable where TEntity : class
+    public interface IService<TEntity> : IDisposable where TEntity : class
     {
         Task<TEntity> Add(TEntity obj);
         Task<IEnumerable<TEntity>> AddRange(IEnumerable<TEntity> obj);
@@ -16,5 +16,6 @@ namespace Teste.DDD.Domain.Interfaces.Repository
         void Delete(Guid id);
         Task<IEnumerable<TEntity>> Search(Expression<Func<TEntity, bool>> predicate);
         Task<int> SaveChanges();
+        void Dispose();
     }
 }

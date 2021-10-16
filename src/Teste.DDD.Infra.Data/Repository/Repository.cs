@@ -21,54 +21,60 @@ namespace Teste.DDD.Infra.Data.Repository
             DbSet = Db.Set<TEntity>();
         }
 
-        public virtual TEntity Adicionar(TEntity obj)
+        public virtual async Task<TEntity> Add(TEntity obj)
         {
-            var objRet = DbSet.Add(obj);
+            var objRet = await DbSet.AddAsync(obj);
             return objRet.Entity;
         }
 
-        public virtual TEntity ObterPorId(Guid id)
+        public virtual async Task<IEnumerable<TEntity>> AddRange(IEnumerable<TEntity> obj)
         {
-            return DbSet.Find(id);
+            //var objRet = await DbSet.AddRangeAsync(obj);
+            //return objRet;
+
+            throw new Exception("Erro");
         }
 
-        public virtual IEnumerable<TEntity> ObterTodos()
+        public virtual async Task<TEntity> GetById(Guid id)
         {
-            return DbSet.ToList();
+            return await DbSet.FindAsync(id);
         }
 
-        public virtual IEnumerable<TEntity> ObterTodosPaginado(int s, int t)
+        public virtual async Task<IEnumerable<TEntity>> GetAll()
         {
-            return DbSet.Skip(s).Take(t).ToList();
+            return await DbSet.AsNoTracking().ToListAsync();
         }
 
-        public virtual TEntity Atualizar(TEntity obj)
+        public virtual async Task<IEnumerable<TEntity>> GetAllPaged(int s, int t)
         {
-            var entry = Db.Entry(obj);
-            DbSet.Attach(obj);
-            entry.State = EntityState.Modified;
+            return await DbSet.AsNoTracking().Skip(s).Take(t).ToListAsync();
+        }
 
+        public virtual TEntity Update(TEntity obj)
+        {
+            Db.Update(obj);
             return obj;
         }
 
-        public virtual void Remover(Guid id)
+        public virtual void Delete(Guid id)
         {
             DbSet.Remove(DbSet.Find(id));
         }
 
-        public IEnumerable<TEntity> Buscar(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<IEnumerable<TEntity>> Search(Expression<Func<TEntity, bool>> predicate)
         {
-            return DbSet.Where(predicate);
+            return await DbSet.Where(predicate).AsNoTracking().ToListAsync();
         }
 
-        public virtual int SaveChanges()
+        public virtual async Task<int> SaveChanges()
         {
-            return Db.SaveChanges();
+            return await Db.SaveChangesAsync();
         }
 
         public void Dispose()
         {
             Db.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

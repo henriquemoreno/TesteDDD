@@ -4,27 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Teste.DDD.Domain.Models;
-using Teste.DDD.Infra.Data.Context;
+using TesteDDD.Application.Interfaces;
+using TesteDDD.Application.ViewModels;
 
 namespace TesteDDD.UI.Site.Controllers
 {
     public class ProdutosController : Controller
     {
-        private readonly MyContext _context;
-        private readonly IMapper _mapper;
+        private readonly IProdutoAppService _produtoAppService;        
 
-        public ProdutosController(MyContext context)
+        public ProdutosController(IProdutoAppService produtoAppService)
         {
-            _context = context;
+            _produtoAppService = produtoAppService;
         }
 
         // GET: Produtos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Produtos.ToListAsync());
+            return View(await _produtoAppService.GetAllProdutos());
         }
 
         // GET: Produtos/Details/5
@@ -35,8 +34,7 @@ namespace TesteDDD.UI.Site.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var produto = await _produtoAppService.GetByIdProduto(id.Value);
             if (produto == null)
             {
                 return NotFound();
@@ -56,13 +54,12 @@ namespace TesteDDD.UI.Site.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Preco,Data")] Produto produto)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Preco,Data")] ProdutoViewModel produto)
         {
             if (ModelState.IsValid)
             {
-                produto.Id = Guid.NewGuid();
-                _context.Add(produto);
-                await _context.SaveChangesAsync();
+                await _produtoAppService.AddProduto(produto);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(produto);
@@ -76,7 +73,7 @@ namespace TesteDDD.UI.Site.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos.FindAsync(id);
+            var produto = await _produtoAppService.GetByIdProduto(id.Value);
             if (produto == null)
             {
                 return NotFound();
@@ -89,7 +86,7 @@ namespace TesteDDD.UI.Site.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nome,Preco,Data")] Produto produto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nome,Preco,Data")] ProdutoViewModel produto)
         {
             if (id != produto.Id)
             {
@@ -100,19 +97,11 @@ namespace TesteDDD.UI.Site.Controllers
             {
                 try
                 {
-                    _context.Update(produto);
-                    await _context.SaveChangesAsync();
+                    await _produtoAppService.UpdateProduto(produto);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProdutoExists(produto.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -127,8 +116,7 @@ namespace TesteDDD.UI.Site.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var produto = await _produtoAppService.GetByIdProduto(id.Value);
             if (produto == null)
             {
                 return NotFound();
@@ -142,15 +130,9 @@ namespace TesteDDD.UI.Site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var produto = await _context.Produtos.FindAsync(id);
-            _context.Produtos.Remove(produto);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            await _produtoAppService.RemoveProduto(id);
 
-        private bool ProdutoExists(Guid id)
-        {
-            return _context.Produtos.Any(e => e.Id == id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

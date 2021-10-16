@@ -1,17 +1,21 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Teste.DDD.Domain.Interfaces.Repository;
+using Teste.DDD.Domain.Interfaces.Service;
+using Teste.DDD.Domain.Services;
 using Teste.DDD.Infra.Data.Context;
+using Teste.DDD.Infra.Data.Interfaces;
+using Teste.DDD.Infra.Data.Repository;
+using Teste.DDD.Infra.Data.UoW;
+using TesteDDD.Application.AutoMapper;
+using TesteDDD.Application.Interfaces;
+using TesteDDD.Application.Services;
 using TesteDDD.UI.Site.Data;
 
 namespace TesteDDD.UI.Site
@@ -40,7 +44,19 @@ namespace TesteDDD.UI.Site
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IProdutoAppService, ProdutoAppService>();
+            services.AddScoped<IProdutoService, ProdutoService>();
+            services.AddScoped<IProdutoRepository, ProdutoRepository>();
+
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
