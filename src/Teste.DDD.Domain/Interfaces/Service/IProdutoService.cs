@@ -4,5 +4,6 @@ namespace Teste.DDD.Domain.Interfaces.Service
 {
     public interface IProdutoService : IService<Produto>
     {
+        bool Exists(string nome);
     }
 }

@@ -13,7 +13,7 @@ namespace TesteDDD.UI.Site.Controllers
 {
     public class ProdutosController : Controller
     {
-        private readonly IProdutoAppService _produtoAppService;        
+        private readonly IProdutoAppService _produtoAppService;
 
         public ProdutosController(IProdutoAppService produtoAppService)
         {
@@ -56,13 +56,19 @@ namespace TesteDDD.UI.Site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nome,Preco,Data")] ProdutoViewModel produto)
         {
-            if (ModelState.IsValid)
-            {
-                await _produtoAppService.AddProduto(produto);
+            if (!ModelState.IsValid) return View(produto);
 
-                return RedirectToAction(nameof(Index));
+            var result = await _produtoAppService.AddProduto(produto);
+
+            if(result.IsValid) return RedirectToAction(nameof(Index));
+
+            foreach (var erro in result.Errors)
+            {
+                ModelState.AddModelError(erro.PropertyName, erro.ErrorMessage);
             }
+
             return View(produto);
+
         }
 
         // GET: Produtos/Edit/5

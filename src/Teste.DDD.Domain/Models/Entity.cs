@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace Teste.DDD.Domain.Models
 {
-    public class Produto : Entity
+    public class Entity
     {
-        public Produto()
+        public Entity()
         {
+            Id = Guid.NewGuid();
         }
 
-        public string Nome { get; set; }
-        public decimal Preco { get; set; }
-        public DateTime Data { get; set; }
+        public Guid Id { get; set; }
     }
 }

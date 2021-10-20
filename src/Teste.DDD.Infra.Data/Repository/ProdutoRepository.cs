@@ -13,7 +13,10 @@ namespace Teste.DDD.Infra.Data.Repository
     {
         public ProdutoRepository(MyContext context) : base(context)
         {
-
+        }
+        public bool Exists(string nome)
+        {
+            return DbSet.Any(i => i.Nome.ToUpper() == nome.ToUpper());
         }
     }
 }

@@ -9,5 +9,6 @@ namespace Teste.DDD.Domain.Interfaces.Repository
 {
     public interface IProdutoRepository : IRepository<Produto>
     {
+        bool Exists(string nome);
     }
 }

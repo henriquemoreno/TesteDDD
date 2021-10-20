@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -17,13 +19,16 @@ namespace Teste.DDD.Domain.Services
             _repository = repository;
         }
 
-        public async Task<TEntity> Add(TEntity obj)
+        public async Task<ValidationResult> Add<TValidator>(TEntity obj)
+            where TValidator : AbstractValidator<TEntity>
         {
-            await _repository.Add(obj);
-            return obj;
+            var result = Validate(obj, Activator.CreateInstance<TValidator>());
+            if(result.IsValid) await _repository.Add(obj);
+
+            return result;
         }
 
-        public async Task<IEnumerable<TEntity>> AddRange(IEnumerable<TEntity> obj)
+        public async Task<IEnumerable<TEntity>> AddRange(IEnumerable<TEntity> obj)            
         {
             await _repository.AddRange(obj);
             return obj;
@@ -63,6 +68,11 @@ namespace Teste.DDD.Domain.Services
         {
             _repository.Update(obj);
             return obj;
+        }
+
+        private ValidationResult Validate(TEntity obj, AbstractValidator<TEntity> validator)
+        {
+            return validator.Validate(obj);
         }
 
         public void Dispose()

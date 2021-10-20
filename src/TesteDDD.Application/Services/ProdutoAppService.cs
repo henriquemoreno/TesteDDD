@@ -1,23 +1,25 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Teste.DDD.Domain.Interfaces.Service;
 using Teste.DDD.Domain.Models;
+using Teste.DDD.Domain.Models.Validations;
 using Teste.DDD.Infra.Data.Interfaces;
 using TesteDDD.Application.Interfaces;
 using TesteDDD.Application.ViewModels;
 
 namespace TesteDDD.Application.Services
 {
-    public class ProdutoAppService :  AppService<Produto>, IProdutoAppService
+    public class ProdutoAppService :  AppService, IProdutoAppService
     {
         private readonly IProdutoService _produtoService;
         private readonly IMapper _mapper;
 
         public ProdutoAppService(IProdutoService produtoService,
                                  IUnitOfWork uow,
-                                 IMapper mapper) : base(uow, produtoService)
+                                 IMapper mapper) : base(uow)
         {
             _produtoService = produtoService;
             _mapper = mapper;
@@ -28,13 +30,13 @@ namespace TesteDDD.Application.Services
             return _mapper.Map<IEnumerable<ProdutoViewModel>>(await _produtoService.GetAll());
         }
 
-        public async Task<ProdutoViewModel> AddProduto(ProdutoViewModel produto)
+        public async Task<ValidationResult> AddProduto(ProdutoViewModel produto)
         {
-            await _produtoService.Add(_mapper.Map<Produto>(produto));
+           var result = await _produtoService.Add<ProdutoValidation>(_mapper.Map<Produto>(produto));
 
-            await Commit();
+            if(result.IsValid) await Commit();
 
-            return produto;
+            return result;
         }
 
         public async Task<ProdutoViewModel> GetByIdProduto(Guid id)
@@ -56,6 +58,11 @@ namespace TesteDDD.Application.Services
             _produtoService.Delete(id);
 
             await Commit();
+        }
+
+        public void Dispose()
+        {
+            _produtoService.Dispose();
         }
     }
 }

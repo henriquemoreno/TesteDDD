@@ -18,5 +18,10 @@ namespace Teste.DDD.Domain.Services
         {
             _produtoRepository = produtoRepository;
         }
+
+        public bool Exists(string nome)
+        {
+            return _produtoRepository.Exists(nome);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -42,7 +43,8 @@ namespace TesteDDD.UI.Site
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddFluentValidation(x => x
+                .RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IProdutoAppService, ProdutoAppService>();

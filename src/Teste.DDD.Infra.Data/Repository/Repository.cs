@@ -29,10 +29,8 @@ namespace Teste.DDD.Infra.Data.Repository
 
         public virtual async Task<IEnumerable<TEntity>> AddRange(IEnumerable<TEntity> obj)
         {
-            //var objRet = await DbSet.AddRangeAsync(obj);
-            //return objRet;
-
-            throw new Exception("Erro");
+            await DbSet.AddRangeAsync(obj);
+            return obj;
         }
 
         public virtual async Task<TEntity> GetById(Guid id)
