@@ -12,7 +12,7 @@ using TesteDDD.Application.ViewModels;
 
 namespace TesteDDD.Application.Services
 {
-    public class ProdutoAppService :  AppService, IProdutoAppService
+    public class ProdutoAppService : AppService, IProdutoAppService
     {
         private readonly IProdutoService _produtoService;
         private readonly IMapper _mapper;
@@ -32,9 +32,16 @@ namespace TesteDDD.Application.Services
 
         public async Task<ValidationResult> AddProduto(ProdutoViewModel produto)
         {
-           var result = await _produtoService.Add<ProdutoValidation>(_mapper.Map<Produto>(produto));
+            var result = new ValidationResult();
+            if (!_produtoService.Exists(produto.Nome))
+            {
+                result = await _produtoService.Add<ProdutoValidation>(_mapper.Map<Produto>(produto));
+                if (result.IsValid) await Commit();
 
-            if(result.IsValid) await Commit();
+                return result;
+            }
+
+            result.Errors.Add(new ValidationFailure("Nome", "Nome já cadastrado"));
 
             return result;
         }
@@ -46,7 +53,7 @@ namespace TesteDDD.Application.Services
 
         public async Task<ProdutoViewModel> UpdateProduto(ProdutoViewModel produto)
         {
-             _produtoService.Update(_mapper.Map<Produto>(produto));
+            _produtoService.Update(_mapper.Map<Produto>(produto));
 
             await Commit();
 

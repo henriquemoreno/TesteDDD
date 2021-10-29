@@ -1,23 +1,13 @@
 using AutoMapper;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Teste.DDD.Domain.Interfaces.Repository;
-using Teste.DDD.Domain.Interfaces.Service;
-using Teste.DDD.Domain.Services;
 using Teste.DDD.Infra.Data.Context;
-using Teste.DDD.Infra.Data.Interfaces;
-using Teste.DDD.Infra.Data.Repository;
-using Teste.DDD.Infra.Data.UoW;
 using TesteDDD.Application.AutoMapper;
-using TesteDDD.Application.Interfaces;
-using TesteDDD.Application.Services;
-using TesteDDD.UI.Site.Data;
+using TesteDDD.UI.Site.Configurations;
 
 namespace TesteDDD.UI.Site
 {
@@ -33,32 +23,18 @@ namespace TesteDDD.UI.Site
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentityConfiguration(Configuration);
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDbContext<MyContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews().AddFluentValidation(x => x
-                .RegisterValidatorsFromAssemblyContaining<Startup>());
+            services.AddMvcConfiguration();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IProdutoAppService, ProdutoAppService>();
-            services.AddScoped<IProdutoService, ProdutoService>();
-            services.AddScoped<IProdutoRepository, ProdutoRepository>();
+            services.ResolveDependencies();
 
-            // Auto Mapper Configurations
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            services.MapperConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +58,8 @@ namespace TesteDDD.UI.Site
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseGlobalizationConfig();
 
             app.UseEndpoints(endpoints =>
             {
