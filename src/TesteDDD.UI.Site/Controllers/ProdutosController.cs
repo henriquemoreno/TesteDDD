@@ -11,7 +11,7 @@ using TesteDDD.Application.ViewModels;
 
 namespace TesteDDD.UI.Site.Controllers
 {
-    public class ProdutosController : Controller
+    public class ProdutosController : BaseController
     {
         private readonly IProdutoAppService _produtoAppService;
 

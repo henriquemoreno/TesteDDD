@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Teste.DDD.Domain\Teste.DDD.Domain.csproj" />
-    <ProjectReference Include="..\Teste.DDD.Infra.Data\Teste.DDD.Infra.Data.csproj" />
+    <ProjectReference Include="..\Teste.DDD.Domain\TesteDDD.Domain.csproj" />
+    <ProjectReference Include="..\Teste.DDD.Infra.Data\TesteDDD.Infra.Data.csproj" />
   </ItemGroup>
 
 </Project>
